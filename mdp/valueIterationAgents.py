@@ -60,7 +60,13 @@ class ValueIterationAgent(ValueEstimationAgent):
         self.runValueIteration()
 
     def runValueIteration(self):
-        # Write value iteration code here
+        """
+        Run batch value iteration for self.iterations steps.
+        Each iteration computes a completely new value table from the previous
+        one (Vk from Vk-1), so all states are updated simultaneously using
+        only values from the prior iteration. Terminal states are assigned
+        value 0; all other states take the maximum Q-value across actions.
+        """
         states = self.mdp.getStates()
         for iteration in range(self.iterations):
             temp_values = util.Counter()
@@ -86,8 +92,10 @@ class ValueIterationAgent(ValueEstimationAgent):
 
     def computeQValueFromValues(self, state, action):
         """
-          Compute the Q-value of action in state from the
-          value function stored in self.values.
+        Return the Q-value of (state, action) using the current value table.
+        Applies the Bellman equation:
+            Q(s, a) = sum over s' of P(s'|s,a) * [R(s,a,s') + discount * V(s')]
+        where V(s') is looked up from self.values.
         """
         q_value = 0
         for next_state, prob in self.mdp.getTransitionStatesAndProbs(state, action):
@@ -97,12 +105,10 @@ class ValueIterationAgent(ValueEstimationAgent):
 
     def computeActionFromValues(self, state):
         """
-          The policy is the best action in the given state
-          according to the values currently stored in self.values.
-
-          You may break ties any way you see fit.  Note that if
-          there are no legal actions, which is the case at the
-          terminal state, you should return None.
+        Return the best action from state according to the current value table.
+        Computes the Q-value for each available action and returns the action
+        with the highest Q-value (the greedy policy with respect to self.values).
+        Returns None if the state is terminal and has no legal actions.
         """
         actions = self.mdp.getPossibleActions(state)
         if not actions:
@@ -154,6 +160,13 @@ class AsynchronousValueIterationAgent(ValueIterationAgent):
         ValueIterationAgent.__init__(self, mdp, discount, iterations)
 
     def runValueIteration(self):
+        """
+        Run cyclic (asynchronous) value iteration for self.iterations steps.
+        Each iteration updates exactly one state in-place, cycling through the
+        state list in order. Unlike batch value iteration, the updated value is
+        immediately available for subsequent updates in the same pass, allowing
+        information to propagate faster. Terminal states are skipped.
+        """
         states = self.mdp.getStates()
         for iteration in range(self.iterations):
             state = states[iteration % len(states)]
@@ -183,6 +196,14 @@ class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
         ValueIterationAgent.__init__(self, mdp, discount, iterations)
 
     def runValueIteration(self):
+        """
+        Run prioritized sweeping value iteration for self.iterations steps.
+        States with the largest Bellman error (difference between current value
+        and the best Q-value) are updated first using a min-heap priority queue.
+        After each update, predecessors of the updated state are re-evaluated
+        and re-added to the queue if their error exceeds theta, propagating
+        value changes efficiently backward through the state graph.
+        """
         priority_queue = util.PriorityQueue()
         states = self.mdp.getStates()
         predecessors = collections.defaultdict(set)

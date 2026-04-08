@@ -20,46 +20,81 @@
 # value iteration.
 
 def question2():
+    """
+    BridgeGrid: change one parameter so the agent crosses the bridge.
+    Setting noise=0.0 makes movement deterministic, eliminating the risk
+    of falling off the narrow bridge, so the agent pursues the high reward.
+    """
     answerDiscount = 0.9
-    answerNoise = 0.2
+    answerNoise = 0.0
     return answerDiscount, answerNoise
 
 def question3a():
-    answerDiscount = None
-    answerNoise = None
-    answerLivingReward = None
+    """
+    DiscountGrid: prefer the close exit (+1) while risking the cliff (-10).
+    Low discount makes the agent prefer nearby rewards over distant ones.
+    Zero noise means the agent moves deterministically, so walking near
+    the cliff is safe and the shorter risky path is taken.
+    """
+    answerDiscount = 0.1
+    answerNoise = 0.0
+    answerLivingReward = 0.0
     return answerDiscount, answerNoise, answerLivingReward
-    # If not possible, return 'NOT POSSIBLE'
 
 def question3b():
-    answerDiscount = None
-    answerNoise = None
-    answerLivingReward = None
+    """
+    DiscountGrid: prefer the close exit (+1) while avoiding the cliff (-10).
+    Discount < 0.316 ensures the close exit beats the distant exit even via
+    the longer safe upper path. Noise=0.2 makes the cliff edge risky enough
+    that the agent prefers the upper route away from the cliff.
+    """
+    answerDiscount = 0.3
+    answerNoise = 0.2
+    answerLivingReward = 0.0
     return answerDiscount, answerNoise, answerLivingReward
-    # If not possible, return 'NOT POSSIBLE'
 
 def question3c():
-    answerDiscount = None
-    answerNoise = None
-    answerLivingReward = None
+    """
+    DiscountGrid: prefer the distant exit (+10) while risking the cliff (-10).
+    High discount makes the agent patient enough to pursue the larger reward.
+    Zero noise means movement is deterministic, so the shorter risky path
+    near the cliff is taken without fear of accidentally falling.
+    """
+    answerDiscount = 0.9
+    answerNoise = 0.0
+    answerLivingReward = 0.0
     return answerDiscount, answerNoise, answerLivingReward
-    # If not possible, return 'NOT POSSIBLE'
 
 def question3d():
-    answerDiscount = None
-    answerNoise = None
-    answerLivingReward = None
+    """
+    DiscountGrid: prefer the distant exit (+10) while avoiding the cliff (-10).
+    High discount keeps the agent patient enough to pursue the large reward.
+    High noise makes accidental cliff falls very likely, so the agent takes
+    the longer but safe upper path to reach the distant exit.
+    """
+    answerDiscount = 0.9
+    answerNoise = 0.5
+    answerLivingReward = 0.0
     return answerDiscount, answerNoise, answerLivingReward
-    # If not possible, return 'NOT POSSIBLE'
 
 def question3e():
-    answerDiscount = None
-    answerNoise = None
-    answerLivingReward = None
+    """
+    DiscountGrid: avoid both exits and the cliff so the episode never terminates.
+    A large positive living reward means the agent earns more by staying alive
+    each step than it would gain from any terminal state, so it loops indefinitely
+    without exiting or falling into the cliff.
+    """
+    answerDiscount = 0.9
+    answerNoise = 0.0
+    answerLivingReward = 10.0
     return answerDiscount, answerNoise, answerLivingReward
-    # If not possible, return 'NOT POSSIBLE'
 
 def question8():
+    """
+    Q-learning on the bridge: determine if any epsilon and learning rate
+    allow the agent to learn to cross the bridge within the episode limit.
+    Returns 'NOT POSSIBLE' if no parameter setting achieves this.
+    """
     answerEpsilon = None
     answerLearningRate = None
     return answerEpsilon, answerLearningRate
